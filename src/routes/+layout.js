@@ -1,3 +1,4 @@
-// Prerender everything — static site, no server runtime.
-export const prerender = true;
-export const ssr = true;
+// SPA mode: no SSR bundle (lighter build on low-RAM server), prerendered shell only.
+export const ssr = false;
+export const prerender = false;
+export const csr = true;

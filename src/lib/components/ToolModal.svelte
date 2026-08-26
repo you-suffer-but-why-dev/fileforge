@@ -8,6 +8,10 @@
   import { markdownToPdf } from '$lib/converters/markdownToPdf.js';
   import { txtToEpub } from '$lib/converters/txtToEpub.js';
   import { csvToPdf } from '$lib/converters/csvToPdf.js';
+  import { imageProcess, imageRotate } from '$lib/converters/imageProcess.js';
+  import { jsonToCsv, csvToJson, jsonToYaml, yamlToJson, base64Encode, base64Decode } from '$lib/converters/dataConvert.js';
+  import { qrGen } from '$lib/converters/qrGen.js';
+  import { urlFetch } from '$lib/converters/urlFetch.js';
 
   let { tool = 'pdfmd', onclose } = $props();
 
@@ -20,7 +24,16 @@
     epub: { title: 'EPUB → TXT', accept: '.epub', multiple: false, desc: 'Strip an ebook down to plain text.' },
     mdtopdf: { title: 'Markdown → PDF', accept: '.md,.markdown,.txt', multiple: false, desc: 'Render Markdown into a clean PDF.' },
     txttoepub: { title: 'TXT → EPUB', accept: '.txt', multiple: false, desc: 'Wrap plain text into an ebook.' },
-    csvtopdf: { title: 'CSV → PDF', accept: '.csv', multiple: false, desc: 'Render a CSV table as a PDF.' }
+    csvtopdf: { title: 'CSV → PDF', accept: '.csv', multiple: false, desc: 'Render a CSV table as a PDF.' },
+    imgcomp: { title: 'Image Compress', accept: 'image/*', multiple: false, desc: 'Resize + compress to JPEG/WebP.' },
+    imgconv: { title: 'Image Convert', accept: 'image/*', multiple: false, desc: 'Convert between PNG/JPG/WebP.' },
+    imgrot: { title: 'Image Rotate', accept: 'image/*', multiple: false, desc: 'Rotate 90/180/270 degrees.' },
+    jsoncsv: { title: 'JSON → CSV', accept: '.json', multiple: false, desc: 'Flatten JSON array into CSV.' },
+    csvjson: { title: 'CSV → JSON', accept: '.csv', multiple: false, desc: 'Parse CSV into JSON.' },
+    jsonyaml: { title: 'JSON ↔ YAML', accept: '.json,.yaml,.yml', multiple: false, desc: 'Convert between JSON and YAML.' },
+    b64: { title: 'Base64 Encode/Decode', accept: '*', multiple: false, desc: 'Encode file to base64 or decode.' },
+    qr: { title: 'QR Code Generator', accept: '.txt', multiple: false, desc: 'Text or URL -> QR PNG.' },
+    urldl: { title: 'URL → Download', accept: '.txt', multiple: false, desc: 'Fetch a URL and download it.' }
   };
   const m = $derived(meta[tool] || meta.pdfmd);
 
@@ -53,6 +66,15 @@
       else if (tool === 'mdtopdf') res = await markdownToPdf(files[0], (p) => (progress = p));
       else if (tool === 'txttoepub') res = await txtToEpub(files[0], (p) => (progress = p));
       else if (tool === 'csvtopdf') res = await csvToPdf(files[0], (p) => (progress = p));
+      else if (tool === 'imgcomp') res = await imageProcess(files[0], { maxDim: 1600, quality: 0.8, format: 'image/jpeg' }, (p) => (progress = p));
+      else if (tool === 'imgconv') res = await imageProcess(files[0], { maxDim: 4000, quality: 0.95, format: 'image/png' }, (p) => (progress = p));
+      else if (tool === 'imgrot') res = await imageRotate(files[0], 90, (p) => (progress = p));
+      else if (tool === 'jsoncsv') res = await jsonToCsv(files[0], (p) => (progress = p));
+      else if (tool === 'csvjson') res = await csvToJson(files[0], (p) => (progress = p));
+      else if (tool === 'jsonyaml') res = (files[0].name.match(/\.ya?ml$/i) ? await yamlToJson(files[0], (p) => (progress = p)) : await jsonToYaml(files[0], (p) => (progress = p)));
+      else if (tool === 'b64') res = (files[0].name.includes('.b64') ? await base64Decode(files[0], (p) => (progress = p)) : await base64Encode(files[0], (p) => (progress = p)));
+      else if (tool === 'qr') res = await qrGen(files[0], (p) => (progress = p));
+      else if (tool === 'urldl') res = await urlFetch(files[0], (p) => (progress = p));
       download(res);
     } catch (e) {
       error = 'Gagal: ' + (e?.message || e);

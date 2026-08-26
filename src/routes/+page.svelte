@@ -13,7 +13,16 @@
     { icon: 'epub', tool: 'epub', title: 'EPUB → TXT', desc: 'Strip an ebook down to plain text.', span: '' },
     { icon: 'pdfmd', tool: 'mdtopdf', title: 'Markdown → PDF', desc: 'Render Markdown into a clean PDF.', span: '' },
     { icon: 'epub', tool: 'txttoepub', title: 'TXT → EPUB', desc: 'Wrap plain text into an ebook.', span: '' },
-    { icon: 'csv', tool: 'csvtopdf', title: 'CSV → PDF', desc: 'Render a CSV table as a PDF.', span: '' }
+    { icon: 'csv', tool: 'csvtopdf', title: 'CSV → PDF', desc: 'Render a CSV table as a PDF.', span: '' },
+    { icon: 'imgpdf', tool: 'imgcomp', title: 'Image Compress', desc: 'Resize + compress to JPEG/WebP.', span: '' },
+    { icon: 'imgpdf', tool: 'imgconv', title: 'Image Convert', desc: 'Convert PNG/JPG/WebP.', span: '' },
+    { icon: 'imgpdf', tool: 'imgrot', title: 'Image Rotate', desc: 'Rotate 90/180/270°.', span: '' },
+    { icon: 'csv', tool: 'jsoncsv', title: 'JSON → CSV', desc: 'Flatten JSON into CSV.', span: '' },
+    { icon: 'csv', tool: 'csvjson', title: 'CSV → JSON', desc: 'Parse CSV into JSON.', span: '' },
+    { icon: 'csv', tool: 'jsonyaml', title: 'JSON ↔ YAML', desc: 'Convert between JSON/YAML.', span: '' },
+    { icon: 'split', tool: 'b64', title: 'Base64', desc: 'Encode/decode file to base64.', span: '' },
+    { icon: 'png', tool: 'qr', title: 'QR Generator', desc: 'Text/URL → QR PNG.', span: '' },
+    { icon: 'png', tool: 'urldl', title: 'URL → Download', desc: 'Fetch a URL and save it.', span: '' }
   ];
 
   let activeTool = $state(null);
