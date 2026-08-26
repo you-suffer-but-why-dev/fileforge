@@ -93,6 +93,10 @@
       "_internal.js"
     ]
   },
+  "node_modules/pdfjs-dist/build/pdf.worker.min.mjs": {
+    "file": "_app/immutable/assets/pdf.worker.min.CHFwMXne.mjs",
+    "src": "node_modules/pdfjs-dist/build/pdf.worker.min.mjs"
+  },
   "src/routes/+layout.js": {
     "file": "entries/pages/_layout.js",
     "name": "entries/pages/_layout",
@@ -108,7 +112,7 @@
       "_escaping.js"
     ],
     "css": [
-      "_app/immutable/assets/_layout.D7RWoVuv.css"
+      "_app/immutable/assets/_layout.XbAJC4Dg.css"
     ]
   },
   "src/routes/+page.svelte": {

@@ -62,8 +62,6 @@ declare module '$env/static/private' {
 	export const HERMES_QUIET: string;
 	export const LANG: string;
 	export const TERMINAL_PERSISTENT_SHELL: string;
-	export const TERMINAL_DEGRADED_MODE: string;
-	export const XDG_RUNTIME_DIR: string;
 	export const TERMINAL_DOCKER_SHM_SIZE: string;
 	export const npm_package_name: string;
 	export const NODE: string;
@@ -123,6 +121,12 @@ declare module '$env/static/private' {
 	export const TERMINAL_ENV: string;
 	export const HERMES_SESSION_THREAD_ID: string;
 	export const npm_config_npm_version: string;
+	export const TERMINAL_DEGRADED_MODE: string;
+	export const XDG_RUNTIME_DIR: string;
+	export const NODE_OPTIONS: string;
+	export const PATH: string;
+	export const TABITOKEN_API_KEY: string;
+	export const TERMINAL_DOCKER_VOLUMES: string;
 	export const CUSTOM_API_KEY: string;
 	export const TERMINAL_DOCKER_MOUNT_CWD_TO_WORKSPACE: string;
 	export const HERMES_CUSTOM_GOROUTER_APP_API_KEY: string;
@@ -133,9 +137,6 @@ declare module '$env/static/private' {
 	export const HERMES_TURN_LEASE_TIMEOUT: string;
 	export const SSL_CERT_FILE: string;
 	export const HERMES_SESSION_CHAT_NAME: string;
-	export const PATH: string;
-	export const TABITOKEN_API_KEY: string;
-	export const TERMINAL_DOCKER_VOLUMES: string;
 	export const HERMES_SESSION_MESSAGE_ID: string;
 	export const npm_command: string;
 	export const GPG_AGENT_INFO: string;
@@ -260,8 +261,6 @@ declare module '$env/dynamic/private' {
 		HERMES_QUIET: string;
 		LANG: string;
 		TERMINAL_PERSISTENT_SHELL: string;
-		TERMINAL_DEGRADED_MODE: string;
-		XDG_RUNTIME_DIR: string;
 		TERMINAL_DOCKER_SHM_SIZE: string;
 		npm_package_name: string;
 		NODE: string;
@@ -321,6 +320,12 @@ declare module '$env/dynamic/private' {
 		TERMINAL_ENV: string;
 		HERMES_SESSION_THREAD_ID: string;
 		npm_config_npm_version: string;
+		TERMINAL_DEGRADED_MODE: string;
+		XDG_RUNTIME_DIR: string;
+		NODE_OPTIONS: string;
+		PATH: string;
+		TABITOKEN_API_KEY: string;
+		TERMINAL_DOCKER_VOLUMES: string;
 		CUSTOM_API_KEY: string;
 		TERMINAL_DOCKER_MOUNT_CWD_TO_WORKSPACE: string;
 		HERMES_CUSTOM_GOROUTER_APP_API_KEY: string;
@@ -331,9 +336,6 @@ declare module '$env/dynamic/private' {
 		HERMES_TURN_LEASE_TIMEOUT: string;
 		SSL_CERT_FILE: string;
 		HERMES_SESSION_CHAT_NAME: string;
-		PATH: string;
-		TABITOKEN_API_KEY: string;
-		TERMINAL_DOCKER_VOLUMES: string;
 		HERMES_SESSION_MESSAGE_ID: string;
 		npm_command: string;
 		GPG_AGENT_INFO: string;
