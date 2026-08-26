@@ -10,7 +10,10 @@
     { icon: 'png', tool: 'png', title: 'PDF → PNG', desc: 'Render each page to an image.', span: '' },
     { icon: 'imgpdf', tool: 'imgpdf', title: 'Image → PDF', desc: 'Stitch photos into a single PDF.', span: '' },
     { icon: 'csv', tool: 'csv', title: 'Table → CSV', desc: 'Pull tables out of PDFs into CSV.', span: 'sm:col-span-2 lg:col-span-2' },
-    { icon: 'epub', tool: 'epub', title: 'EPUB → TXT', desc: 'Strip an ebook down to plain text.', span: '' }
+    { icon: 'epub', tool: 'epub', title: 'EPUB → TXT', desc: 'Strip an ebook down to plain text.', span: '' },
+    { icon: 'pdfmd', tool: 'mdtopdf', title: 'Markdown → PDF', desc: 'Render Markdown into a clean PDF.', span: '' },
+    { icon: 'epub', tool: 'txttoepub', title: 'TXT → EPUB', desc: 'Wrap plain text into an ebook.', span: '' },
+    { icon: 'csv', tool: 'csvtopdf', title: 'CSV → PDF', desc: 'Render a CSV table as a PDF.', span: '' }
   ];
 
   let activeTool = $state(null);

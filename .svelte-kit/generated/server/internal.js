@@ -26,7 +26,7 @@ export const options = {
 		app: ({ head, body, assets, nonce, env }) => "<!DOCTYPE html>\n<html lang=\"en\" class=\"dark\">\n  <head>\n    <meta charset=\"utf-8\" />\n    <link rel=\"icon\" href=\"" + assets + "/favicon.svg\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />\n    <meta name=\"description\" content=\"Client-side file converter. PDF ↔ Markdown, split/join, PDF → PNG, image → PDF, table → CSV, EPUB → TXT. Files never leave your browser.\" />\n    " + head + "\n  </head>\n  <body data-sveltekit-preload-data=\"hover\" class=\"bg-base text-ink font-sans antialiased min-h-screen\">\n    <div style=\"display: contents\">" + body + "</div>\n  </body>\n</html>\n",
 		error
 	},
-	version_hash: "ptdcd0"
+	version_hash: "f6rkpe"
 };
 
 export async function get_hooks() {

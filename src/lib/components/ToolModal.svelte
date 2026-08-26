@@ -5,6 +5,9 @@
   import { pdfToMarkdown } from '$lib/converters/pdfToMarkdown.js';
   import { tableToCsv } from '$lib/converters/tableToCsv.js';
   import { epubToTxt } from '$lib/converters/epubToTxt.js';
+  import { markdownToPdf } from '$lib/converters/markdownToPdf.js';
+  import { txtToEpub } from '$lib/converters/txtToEpub.js';
+  import { csvToPdf } from '$lib/converters/csvToPdf.js';
 
   let { tool = 'pdfmd', onclose } = $props();
 
@@ -14,7 +17,10 @@
     png: { title: 'PDF → PNG', accept: '.pdf', multiple: false, desc: 'Render each PDF page as a PNG image.' },
     imgpdf: { title: 'Image → PDF', accept: 'image/*', multiple: true, desc: 'Stitch images into a single PDF.' },
     csv: { title: 'Table → CSV', accept: '.pdf', multiple: false, desc: 'Pull tabular text out of a PDF into CSV.' },
-    epub: { title: 'EPUB → TXT', accept: '.epub', multiple: false, desc: 'Strip an ebook down to plain text.' }
+    epub: { title: 'EPUB → TXT', accept: '.epub', multiple: false, desc: 'Strip an ebook down to plain text.' },
+    mdtopdf: { title: 'Markdown → PDF', accept: '.md,.markdown,.txt', multiple: false, desc: 'Render Markdown into a clean PDF.' },
+    txttoepub: { title: 'TXT → EPUB', accept: '.txt', multiple: false, desc: 'Wrap plain text into an ebook.' },
+    csvtopdf: { title: 'CSV → PDF', accept: '.csv', multiple: false, desc: 'Render a CSV table as a PDF.' }
   };
   const m = $derived(meta[tool] || meta.pdfmd);
 
@@ -44,6 +50,9 @@
       else if (tool === 'imgpdf') res = await imageToPdf(files, (p) => (progress = p));
       else if (tool === 'csv') res = await tableToCsv(files[0], (p) => (progress = p));
       else if (tool === 'epub') res = await epubToTxt(files[0], (p) => (progress = p));
+      else if (tool === 'mdtopdf') res = await markdownToPdf(files[0], (p) => (progress = p));
+      else if (tool === 'txttoepub') res = await txtToEpub(files[0], (p) => (progress = p));
+      else if (tool === 'csvtopdf') res = await csvToPdf(files[0], (p) => (progress = p));
       download(res);
     } catch (e) {
       error = 'Gagal: ' + (e?.message || e);
@@ -72,7 +81,7 @@
 </script>
 
 <div class="fixed inset-0 z-[100] flex items-center justify-center p-4" role="dialog" aria-modal="true">
-  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick={close}></div>
+  <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" role="button" tabindex="0" aria-label="Close" onclick={close} onkeydown={(e) => (e.key === 'Escape' || e.key === 'Enter') && close()}></div>
   <div class="relative w-full max-w-md rounded-2xl border border-white/[0.08] bg-[#121214] p-6">
     <div class="flex items-start justify-between">
       <h3 class="text-lg font-semibold text-[#FAFAFA]">{m.title}</h3>

@@ -96,6 +96,27 @@ function _page($$renderer) {
       title: "EPUB → TXT",
       desc: "Strip an ebook down to plain text.",
       span: ""
+    },
+    {
+      icon: "pdfmd",
+      tool: "mdtopdf",
+      title: "Markdown → PDF",
+      desc: "Render Markdown into a clean PDF.",
+      span: ""
+    },
+    {
+      icon: "epub",
+      tool: "txttoepub",
+      title: "TXT → EPUB",
+      desc: "Wrap plain text into an ebook.",
+      span: ""
+    },
+    {
+      icon: "csv",
+      tool: "csvtopdf",
+      title: "CSV → PDF",
+      desc: "Render a CSV table as a PDF.",
+      span: ""
     }
   ];
   head("1uha8ag", $$renderer, ($$renderer2) => {
