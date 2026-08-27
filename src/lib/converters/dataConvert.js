@@ -16,12 +16,27 @@ export async function jsonToCsv(file, onProgress) {
 
 export async function csvToJson(file, onProgress) {
   const csv = await file.text();
-  const lines = csv.split('\n').filter((l) => l.trim());
-  const headers = lines[0].split(',').map((h) => h.trim());
-  const out = lines.slice(1).map((l) => {
-    const cells = l.split(',');
+  const rows = [];
+  let cur = '', field = '', inQ = false;
+  for (let i = 0; i < csv.length; i++) {
+    const c = csv[i];
+    if (inQ) {
+      if (c === '"' && csv[i + 1] === '"') { field += '"'; i++; }
+      else if (c === '"') inQ = false;
+      else field += c;
+    } else {
+      if (c === '"') inQ = true;
+      else if (c === ',') { cur.push(field); field = ''; }
+      else if (c === '\n') { cur.push(field); rows.push(cur); cur = []; field = ''; }
+      else if (c === '\r') { /* skip */ }
+      else field += c;
+    }
+  }
+  if (field !== '' || cur.length) { cur.push(field); rows.push(cur); }
+  const headers = rows[0].map((h) => h.trim());
+  const out = rows.slice(1).map((r) => {
     const o = {};
-    headers.forEach((h, i) => (o[h] = cells[i]?.trim() ?? ''));
+    headers.forEach((h, i) => (o[h] = (r[i] ?? '').trim()));
     return o;
   });
   onProgress?.(1);
@@ -43,20 +58,38 @@ export async function jsonToYaml(file, onProgress) {
 }
 
 export async function yamlToJson(file, onProgress) {
-  // minimal parser: supports maps + lists of scalars
+  // supports: nested maps, scalar lists (- item), inline scalars
   const txt = await file.text();
   const lines = txt.split('\n');
   const root = {};
-  let stack = [{ indent: -1, obj: root }];
+  const stack = [{ indent: -1, obj: root, isList: false }];
   for (const raw of lines) {
     if (!raw.trim() || raw.trim().startsWith('#')) continue;
+    const listM = raw.match(/^(\s*)-\s+(.*)$/);
+    if (listM) {
+      const indent = listM[1].length;
+      const val = listM[2];
+      while (stack.length > 1 && indent < stack[stack.length - 1].indent) stack.pop();
+      const top = stack[stack.length - 1];
+      if (!top.isList) { top.obj[top.key] = []; top.isList = true; }
+      if (val.includes(':') && !/^["'].*["']$/.test(val)) {
+        const o = {};
+        stack.push({ indent, obj: o, isList: false, key: null });
+        const [k, ...rest] = val.split(':'); top.obj[top.key].push(o); stack[stack.length - 1].key = k.trim();
+        const v = rest.join(':').trim();
+        if (v !== '') o[k.trim()] = v;
+      } else {
+        top.obj[top.key].push(val.trim());
+      }
+      continue;
+    }
     const m = raw.match(/^(\s*)([-\w]+):\s*(.*)$/);
     if (!m) continue;
     const indent = m[1].length, key = m[2], val = m[3];
     while (stack.length > 1 && indent <= stack[stack.length - 1].indent) stack.pop();
     const parent = stack[stack.length - 1].obj;
     if (val !== '') parent[key] = val;
-    else { parent[key] = {}; stack.push({ indent, obj: parent[key] }); }
+    else { parent[key] = {}; stack.push({ indent, obj: parent[key], isList: false, key: null }); }
   }
   onProgress?.(1);
   return { type: 'text', text: JSON.stringify(root, null, 2), name: file.name.replace(/\.ya?ml$/i, '') + '.json' };

@@ -10,7 +10,7 @@ export async function pdfToMarkdown(file, onProgress) {
   for (let i = 1; i <= doc.numPages; i++) {
     const page = await doc.getPage(i);
     const txt = await page.getTextContent();
-    const text = txt.items.map((t) => t.str).join(' ');
+    const text = txt.items.map((t) => t.str || '').join(' ');
     parts.push(`## Page ${i}\n\n${text}\n`);
     onProgress?.(i / doc.numPages);
   }

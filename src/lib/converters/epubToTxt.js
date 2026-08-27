@@ -2,6 +2,7 @@
 import * as JSZip from 'jszip';
 
 export async function epubToTxt(file, onProgress) {
+  if (file.size > 100 * 1024 * 1024) throw new Error('File terlalu besar (>100MB)');
   const zip = await JSZip.loadAsync(await file.arrayBuffer());
   const files = Object.values(zip.files).filter(
     (f) => !f.dir && /\.(x?html?|xml)$/i.test(f.name)

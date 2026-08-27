@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from 'svelte';
   import { pdfToPng } from '$lib/converters/pdfToPng.js';
   import { imageToPdf } from '$lib/converters/imageToPdf.js';
   import { splitPdf, joinPdf } from '$lib/converters/splitJoinPdf.js';
@@ -14,6 +15,14 @@
   import { urlFetch } from '$lib/converters/urlFetch.js';
 
   let { tool = 'pdfmd', onclose } = $props();
+
+  // expected extensions per tool, for client-side guard
+  const allowExt = {
+    pdfmd: ['pdf'], png: ['pdf'], split: ['pdf'], imgpdf: ['png','jpg','jpeg','webp','gif'], csv: ['pdf'],
+    epub: ['epub'], mdtopdf: ['md','markdown','txt'], txttoepub: ['txt'], csvtopdf: ['csv'],
+    imgcomp: ['png','jpg','jpeg','webp','gif'], imgconv: ['png','jpg','jpeg','webp','gif'], imgrot: ['png','jpg','jpeg','webp','gif'],
+    jsoncsv: ['json'], csvjson: ['csv'], jsonyaml: ['json','yaml','yml'], b64: null, qr: ['txt'], urldl: ['txt']
+  };
 
   const meta = {
     pdfmd: { title: 'PDF → Markdown', accept: '.pdf', multiple: false, desc: 'Extract text from a PDF into Markdown.' },
@@ -42,6 +51,13 @@
   let progress = $state(0);
   let error = $state('');
 
+  onMount(() => {
+    document.body.style.overflow = 'hidden';
+    return () => (document.body.style.overflow = '');
+  });
+
+  function extOf(name) { return (name.split('.').pop() || '').toLowerCase(); }
+
   function onPick(e) {
     files = Array.from(e.target.files || []);
     error = '';
@@ -52,8 +68,17 @@
     error = '';
   }
 
+  function validate() {
+    const exts = allowExt[tool];
+    if (!exts) return true; // no restriction (b64, etc.)
+    if (!files.length) { error = 'Pilih file dulu.'; return false; }
+    const bad = files.find((f) => !exts.includes(extOf(f.name)));
+    if (bad) { error = `Tipe file tidak didukung: ${bad.name}`; return false; }
+    return true;
+  }
+
   async function run() {
-    if (!files.length) { error = 'Pilih file dulu.'; return; }
+    if (!validate()) return;
     busy = true; progress = 0; error = '';
     try {
       let res;
@@ -67,7 +92,7 @@
       else if (tool === 'txttoepub') res = await txtToEpub(files[0], (p) => (progress = p));
       else if (tool === 'csvtopdf') res = await csvToPdf(files[0], (p) => (progress = p));
       else if (tool === 'imgcomp') res = await imageProcess(files[0], { maxDim: 1600, quality: 0.8, format: 'image/jpeg' }, (p) => (progress = p));
-      else if (tool === 'imgconv') res = await imageProcess(files[0], { maxDim: 4000, quality: 0.95, format: 'image/png' }, (p) => (progress = p));
+      else if (tool === 'imgconv') res = await imageProcess(files[0], { maxDim: 4000, quality: 0.95, format: 'image/webp' }, (p) => (progress = p));
       else if (tool === 'imgrot') res = await imageRotate(files[0], 90, (p) => (progress = p));
       else if (tool === 'jsoncsv') res = await jsonToCsv(files[0], (p) => (progress = p));
       else if (tool === 'csvjson') res = await csvToJson(files[0], (p) => (progress = p));
@@ -83,16 +108,23 @@
     }
   }
 
+  function safeName(n) {
+    const s = String(n || 'download');
+    const base = s.split(/[\\/]/).pop();
+    return base.replace(/[^\w.\-]/g, '_') || 'download';
+  }
+
   function download(res) {
-    let url, name = res.name;
+    if (!res) { error = 'Tidak ada hasil.'; return; }
+    let url, name = safeName(res.name);
     if (res.type === 'text') {
       url = URL.createObjectURL(new Blob([res.text], { type: 'text/plain' }));
-    } else if (res.type === 'blob') {
+    } else if (res.type === 'blob' || res.type === 'zip') {
       url = URL.createObjectURL(res.blob);
     } else if (res.type === 'single') {
       url = res.dataUrl;
-    } else if (res.type === 'zip') {
-      url = URL.createObjectURL(res.blob);
+    } else {
+      error = 'Format hasil tidak dikenal.'; return;
     }
     const a = document.createElement('a');
     a.href = url; a.download = name; a.click();
